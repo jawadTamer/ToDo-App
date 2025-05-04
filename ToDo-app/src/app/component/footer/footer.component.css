@@ -1,0 +1,14 @@
+footer{
+    background: var(--color-light);
+    margin: 10px;
+    border-radius: 10px;
+}
+footer h5 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+footer p {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
