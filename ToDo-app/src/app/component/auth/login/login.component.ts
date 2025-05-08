@@ -29,22 +29,41 @@ export class LoginComponent {
         next: (response) => {
           console.log('Login successful!', response);
           localStorage.setItem('token', response.token);
-          this.formErrors = {};
-  
-          Swal.fire({
-            icon: 'success',
-            title: 'Login successful!',
-            showConfirmButton: false,
-            timer: 1500
-          }).then(() => {
-            // بعد نجاح تسجيل الدخول، ممكن تحوله لصفحة تانية هنا
-            this.router.navigateByUrl('/dashboard');
-          });
+
+        
+          if (response.name) {
+            localStorage.setItem('userName', response.name);
+            this.formErrors = {};
+            Swal.fire({
+              icon: 'success',
+              title: 'Login successful!',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              this.router.navigateByUrl('/dashboard');
+            });
+          } else if (this.loginForm.value.email) {
+       
+            this.authService.getUserByEmail(this.loginForm.value.email).subscribe(user => {
+              if (user && user.name) {
+                localStorage.setItem('userName', user.name);
+              }
+              this.formErrors = {};
+              Swal.fire({
+                icon: 'success',
+                title: 'Login successful!',
+                showConfirmButton: false,
+                timer: 1500
+              }).then(() => {
+                this.router.navigateByUrl('/dashboard');
+              });
+            });
+          }
         },
         error: (error) => {
           console.log('Login error:', error);
           this.formErrors = error;
-  
+
           Swal.fire({
             icon: 'error',
             title: 'Login failed!',
