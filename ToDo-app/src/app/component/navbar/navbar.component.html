@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid px-md-4 px-lg-5">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <span class="circle-icon me-2">
+                <i class="fa-solid fa-list-check"></i>
+            </span>
+            ToDoList
+        </a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            (click)="isNavbarCollapsed = !isNavbarCollapsed"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse" [class.collapse]="isNavbarCollapsed" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2 px-2 px-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">Tasks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" (click)="scrollToFooter($event)" >About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" (click)="scrollToFooter($event)" >Contact</a>
+                </li>
+            </ul>
+            <form class="d-flex" role="search">
+                <button class="btn btn-darkBlue fw-medium px-3" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>

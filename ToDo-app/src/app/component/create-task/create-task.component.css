@@ -1,0 +1,37 @@
+
+.container {
+  max-width: 600px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.btn-close {
+  font-size: 0.75rem;
+}
+
+.btn-primary, .btn-secondary {
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  opacity: 0.9;
+}
+
+.form-control:focus, .form-select:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.text-danger {
+  color: red !important;
+}
