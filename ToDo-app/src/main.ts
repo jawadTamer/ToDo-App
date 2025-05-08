@@ -4,10 +4,12 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { importProvidersFrom } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { provideToastr } from 'ngx-toastr';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideAnimations(),
+    provideToastr(), // ✅ Add this line to enable Toastr
     importProvidersFrom(HttpClientModule),
     ...appConfig.providers
   ],
