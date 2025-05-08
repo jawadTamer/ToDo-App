@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
 export class SignupComponent {
   signupForm: FormGroup;
   formErrors: any = {};
+  isSubmitting = false; // Add this flag
 
   constructor(
     private fb: FormBuilder,
@@ -35,14 +36,17 @@ export class SignupComponent {
   }
 
   onSubmit() {
-    if (this.signupForm.valid) {
+    if (this.signupForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true; // Set flag to prevent double submit
       const userData: UserData = this.signupForm.value;
 
       this.authService.register(userData).subscribe({
         next: (response) => {
           console.log('Signup successful!', response);
           localStorage.setItem('token', response.token);
+          localStorage.setItem('userName', response.name); 
           this.formErrors = {};
+          this.isSubmitting = false;
 
           Swal.fire({
             icon: 'success',
@@ -56,6 +60,7 @@ export class SignupComponent {
         error: (errors) => {
           console.log('Signup errors:', errors);
           this.formErrors = errors;
+          this.isSubmitting = false; // Reset flag
 
           Swal.fire({
             icon: 'error',
