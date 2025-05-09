@@ -1,0 +1,78 @@
+<div class="container">
+    <h2>Update Task</h2>
+    <form [formGroup]="taskForm" (ngSubmit)="updateTask()">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input id="title" type="text" formControlName="title" class="form-control" />
+        <div *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.hasError('required')" class="error">
+          Title is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="content">Content</label>
+        <textarea id="content" formControlName="content" class="form-control"></textarea>
+        <div *ngIf="taskForm.get('content')?.touched && taskForm.get('content')?.hasError('required')" class="error">
+          Content is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" formControlName="category" class="form-control">
+          <option value="">Select Category</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Other">Other</option>
+        </select>
+        <div *ngIf="taskForm.get('category')?.touched && taskForm.get('category')?.hasError('required')" class="error">
+          Category is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="priority">Priority</label>
+        <select id="priority" formControlName="priority" class="form-control">
+          <option value="">Select Priority</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+        <div *ngIf="taskForm.get('priority')?.touched && taskForm.get('priority')?.hasError('required')" class="error">
+          Priority is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="tags">Tags (comma-separated)</label>
+        <input id="tags" type="text" formControlName="tags" class="form-control" placeholder="e.g., tag1,tag2" />
+        <div *ngIf="taskForm.get('tags')?.touched && taskForm.get('tags')?.hasError('required')" class="error">
+          Tags are required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" formControlName="status" class="form-control">
+          <option value="">Select Status</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+        </select>
+        <div *ngIf="taskForm.get('status')?.touched && taskForm.get('status')?.hasError('required')" class="error">
+          Status is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="date">Date</label>
+        <input id="date" type="datetime-local" formControlName="date" class="form-control" />
+        <div *ngIf="taskForm.get('date')?.touched && taskForm.get('date')?.hasError('required')" class="error">
+          Date is required.
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Updating...' : 'Update Task' }}
+      </button>
+    </form>
+  </div>
