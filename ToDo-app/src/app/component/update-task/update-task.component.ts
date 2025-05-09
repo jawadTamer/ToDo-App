@@ -1,5 +1,5 @@
 import { TodoService } from './../../shared/services/todo.service';
-import { todo } from './../../shared/Model/todo';
+import { todo } from './../../shared/model/todo';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';

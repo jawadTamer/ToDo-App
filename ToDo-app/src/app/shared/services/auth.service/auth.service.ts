@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 // Interfaces
 import { UserData, LoginPayload, AuthResponse } from './auth.models';
@@ -38,5 +39,12 @@ export class AuthService {
       return throwError(() => ({ general: error.error.message })); // general message
     }
     return throwError(() => ({ general: 'An unknown error occurred.' }));
+  }
+
+  // Fetch user by email from /debug/users
+  getUserByEmail(email: string): Observable<UserData | undefined> {
+    return this.http.get<UserData[]>(`${this.apiUrl}/debug/users`).pipe(
+      map(users => users.find(user => user.email === email))
+    );
   }
 }
