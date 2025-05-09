@@ -50,28 +50,40 @@ interface Todo {
   ]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
+  // Columns to display in the tasks table
   displayedColumns: string[] = ['task', 'dueDate', 'status', 'actions'];
+  // Data source for the Material table
   dataSource!: MatTableDataSource<Todo>;
+  // References to paginator and sort components
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  todos: Todo[] = [
+  // Array to hold all todo tasks
+  todos: Todo[] = [];
 
-  ];
-
+  // Counters for completed and pending tasks
   completedTasks: number = 0;
   pendingTasks: number = 0;
 
+  // Inject the TaskService to fetch tasks
   constructor(private taskService: TaskService) {}
 
+  // Store the user's name for display
+  userName: string = '';
+
+  // Lifecycle hook: runs when component initializes
   ngOnInit() {
+    this.userName = localStorage.getItem('userName') || '';
     this.fetchTasks();
     this.calculateTaskStatus();
   }
 
+  /**
+   * Fetch tasks from the server and update the data source.
+   */
   fetchTasks() {
     this.taskService.getTasks().subscribe(
-      (tasks:any) => {
+      (tasks: any) => {
         this.todos = tasks;
         this.dataSource = new MatTableDataSource(this.todos);
         if (this.dataSource.paginator) {
@@ -84,6 +96,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     );
   }
 
+  // Lifecycle hook: runs after the view has been initialized
   ngAfterViewInit() {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
@@ -91,6 +104,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Toggle the status of a task between Complete and Incomplete.
+   * @param todo The task to update.
+   */
   toggleStatus(todo: Todo) {
     todo.status = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
     this.dataSource.data = [...this.todos];
@@ -100,11 +117,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Calculate the number of completed and pending tasks.
+   */
   calculateTaskStatus() {
     this.completedTasks = this.todos.filter(todo => todo.status === 'Complete').length;
     this.pendingTasks = this.todos.filter(todo => todo.status === 'Incomplete').length;
   }
 
+  /**
+   * Scroll smoothly to the tasks table in the view.
+   */
   scrollToTable() {
     const tableElement = document.getElementById('taskTable');
     if (tableElement) {
