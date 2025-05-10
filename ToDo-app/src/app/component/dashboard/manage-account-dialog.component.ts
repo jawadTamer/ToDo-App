@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { MatDialogContent } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
-import { AuthService } from '../../shared/services/services/auth.service';
+import { AuthServicee } from '../../shared/services/services/auth.servicee';
 @Component({
     standalone: true,
   selector: 'app-manage-account-dialog',
@@ -28,7 +28,7 @@ export class ManageAccountDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<ManageAccountDialogComponent>,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthServicee
   ) {}
 
   logout() {

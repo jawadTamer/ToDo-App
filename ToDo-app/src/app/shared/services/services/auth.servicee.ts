@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthServicee {
   private apiUrl = 'https://todo-app-server-production.up.railway.app';
 
   constructor(private http: HttpClient) { }
