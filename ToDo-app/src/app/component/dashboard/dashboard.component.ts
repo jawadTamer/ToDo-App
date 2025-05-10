@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   pendingTasks: number = 0;
 
   // Inject the TaskService to fetch tasks
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService,private router:Router) {}
 
   // Store the user's name for display
   userName: string = '';
@@ -97,7 +97,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     );
   }
-
+ on(){
+  this.router.navigateByUrl('/add');
+ }
   // Lifecycle hook: runs after the view has been initialized
   ngAfterViewInit() {
     if (this.dataSource) {
