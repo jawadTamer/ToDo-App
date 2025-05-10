@@ -1,6 +1,6 @@
 export interface todo {
-  id?: number; // Optional, assigned by server
-  email?: string; // Optional, added by server based on JWT
+  id?: number;
+  email?: string;
   title: string;
   content: string;
   category: string;
