@@ -13,6 +13,9 @@ interface Todo {
   providedIn: 'root'
 })
 export class TaskService {
+  deletetodo(id: number | undefined) {
+    throw new Error('Method not implemented.');
+  }
   // Base URL for the API
   private apiUrl = 'https://todo-app-server-production.up.railway.app';
 

@@ -1,6 +1,6 @@
 export interface todo {
   id?: number;
-  email?: string; 
+  email?: string;
   title: string;
   content: string;
   category: string;

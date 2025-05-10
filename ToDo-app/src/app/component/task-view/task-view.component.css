@@ -1,0 +1,69 @@
+.bg-gradient {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.enhanced-card {
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.enhanced-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+  transition: transform 0.25s ease;
+}
+
+mat-icon {
+  font-size: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+  color: #fff;
+}
+
+.status-badge {
+  font-size: 1.25rem;
+  padding: 0.55em 1.2em;
+  border-radius: 50px;
+  font-weight: 600;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(20, 20, 20, 0.75);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.btn-outline-primary {
+  color: white;
+  background-color: transparent;
+  border: 2px solid white;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  color: white;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.hover-primary-text:hover {
+  color: white !important;
+}
+
+@media (max-width: 576px) {
+  .card-title {
+    font-size: 1.5rem;
+  }
+  .status-badge {
+    font-size: 1rem;
+  }
+}
