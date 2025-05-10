@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { TaskService } from '../../shared/services/task.service';
 import { TodoService } from '../../shared/services/todo.service';
@@ -9,9 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 
 import { Router, RouterModule } from '@angular/router';
@@ -22,6 +21,7 @@ import Swal from 'sweetalert2';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { trigger, transition, style, animate } from '@angular/animations';
+import Swal from 'sweetalert2';
 
 import { NavbarComponent } from "../navbar/navbar.component";
 import { FooterComponent } from "../footer/footer.component";
@@ -31,12 +31,18 @@ import { NavbarStateService } from '../../shared/services/navbar-state.service';
 import { Router, RouterModule } from '@angular/router';
 
 
-
 interface Todo {
   id?: number;
-  task: string;
-  dueDate: string;
+  email?: string;
+  title: string;
+  content: string;
+  category: string;
+  priority: string;
+  tags: string[];
+
   status: string;
+  date: string;
+  _id?: string;
 }
 
 @Component({
@@ -48,18 +54,15 @@ interface Todo {
     MatMenuModule,
     MatIconModule,
     MatTableModule,
-    MatPaginatorModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     CommonModule,
-
     NavbarComponent,
     FooterComponent,
     ManageAccountDialogComponent,
-
     RouterModule
   ],
-
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   animations: [
@@ -75,9 +78,13 @@ interface Todo {
   ]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['task', 'dueDate', 'status', 'actions'];
+
+  // Columns to display in the tasks table
+  displayedColumns: string[] = ['title', 'date', 'status', 'actions'];
+  // Data source for the Material table
   dataSource!: MatTableDataSource<Todo>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  // Reference to sort component
+
   @ViewChild(MatSort) sort!: MatSort;
 
   todos: Todo[] = [];
@@ -85,14 +92,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   pendingTasks: number = 0;
 
 
- 
+  // Loading state
+  isLoading: boolean = true;
+
+
   constructor(
     private taskService: TaskService,
+    private todoService: TodoService,
     private dialog: MatDialog,
-    private navbarState: NavbarStateService ,
-  private Router:Router
+    private navbarState: NavbarStateService,
+    private Router: Router
   ) {}
-
 
   // Store the user's name for display
 
@@ -111,28 +121,33 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   fetchTasks() {
-    this.taskService.getTasks().subscribe({
-      next: (tasks: Todo[]) => {
+
+    this.isLoading = true;
+    this.todoService.getalltodo().subscribe(
+      (tasks: any) => {
         this.todos = tasks;
         this.dataSource = new MatTableDataSource(this.todos);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.calculateTaskStatus();
+        this.isLoading = false;
+
       },
       error: (error) => {
         console.error('Error fetching tasks', error);
+        this.isLoading = false;
       }
     });
   }
 
- on(){
-  this.Router.navigateByUrl('/add');
- }
+
+  on() {
+    this.Router.navigateByUrl('/add');
+  }
+
+
   // Lifecycle hook: runs after the view has been initialized
 
   ngAfterViewInit() {
     if (this.dataSource) {
-      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
     // Observe when the table is in view
@@ -157,17 +172,33 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   toggleStatus(todo: Todo) {
-    todo.status = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
+    // Toggle the status
+    const newStatus = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
+    todo.status = newStatus;
+    
+    // Update the UI immediately
     this.dataSource.data = [...this.todos];
     this.calculateTaskStatus();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+    
+    // Update the task in the backend
+    const updatedTodo = { ...todo, status: newStatus };
+    this.todoService.updatetodo(updatedTodo).subscribe({
+      next: (response) => {
+        console.log('Task status updated successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error updating task status:', error);
+        // Revert the status change in case of error
+        todo.status = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
+        this.dataSource.data = [...this.todos];
+        this.calculateTaskStatus();
+      }
+    });
   }
 
   calculateTaskStatus() {
     this.completedTasks = this.todos.filter(todo => todo.status === 'Complete').length;
-    this.pendingTasks = this.todos.filter(todo => todo.status === 'Incomplete').length;
+    this.pendingTasks = this.todos.filter(todo => todo.status === 'Incomplete' || todo.status === 'pending' || todo.status === 'in-progress').length;
   }
 
 
@@ -233,6 +264,33 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.dialog.open(ManageAccountDialogComponent, {
       width: '350px'
 
+    });
+  }
+
+  deleteTask(task: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this task?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.todoService.deletetodo(task._id || task.id).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'Task has been deleted.', 'success');
+            this.todos = this.todos.filter(t => (t._id || t.id) !== (task._id || task.id));
+            this.dataSource.data = [...this.todos];
+            this.calculateTaskStatus();
+          },
+          error: () => {
+            Swal.fire('Error!', 'Failed to delete task.', 'error');
+          }
+        });
+      }
     });
   }
 }
