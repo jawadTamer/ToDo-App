@@ -12,24 +12,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-
 import { Router, RouterModule } from '@angular/router';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import Swal from 'sweetalert2';  
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { trigger, transition, style, animate } from '@angular/animations';
 import Swal from 'sweetalert2';
-
 import { NavbarComponent } from "../navbar/navbar.component";
 import { FooterComponent } from "../footer/footer.component";
 import { ManageAccountDialogComponent } from './manage-account-dialog.component';
 import { NavbarStateService } from '../../shared/services/navbar-state.service';
-
-import { Router, RouterModule } from '@angular/router';
-
 
 interface Todo {
   id?: number;
@@ -39,7 +31,6 @@ interface Todo {
   category: string;
   priority: string;
   tags: string[];
-
   status: string;
   date: string;
   _id?: string;
@@ -78,79 +69,34 @@ interface Todo {
   ]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-
-  // Columns to display in the tasks table
   displayedColumns: string[] = ['title', 'date', 'status', 'actions'];
-  // Data source for the Material table
   dataSource!: MatTableDataSource<Todo>;
-  // Reference to sort component
-
   @ViewChild(MatSort) sort!: MatSort;
 
   todos: Todo[] = [];
   completedTasks: number = 0;
   pendingTasks: number = 0;
-
-
-  // Loading state
   isLoading: boolean = true;
-
+  userName: string = '';
 
   constructor(
     private taskService: TaskService,
     private todoService: TodoService,
     private dialog: MatDialog,
     private navbarState: NavbarStateService,
-    private Router: Router
+    private router: Router
   ) {}
 
-  // Store the user's name for display
-
-  userName: string = '';
-
-  constructor(
-    private taskService: TaskService,
-    private router: Router,
-    private dialog: MatDialog,
-    private todoservice: TodoService
-  ) {}
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.userName = localStorage.getItem('userName') || '';
     this.fetchTasks();
   }
 
-  fetchTasks() {
-
-    this.isLoading = true;
-    this.todoService.getalltodo().subscribe(
-      (tasks: any) => {
-        this.todos = tasks;
-        this.dataSource = new MatTableDataSource(this.todos);
-        this.calculateTaskStatus();
-        this.isLoading = false;
-
-      },
-      error: (error) => {
-        console.error('Error fetching tasks', error);
-        this.isLoading = false;
-      }
-    });
-  }
-
-
-  on() {
-    this.Router.navigateByUrl('/add');
-  }
-
-
-  // Lifecycle hook: runs after the view has been initialized
-
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     if (this.dataSource) {
       this.dataSource.sort = this.sort;
     }
-    // Observe when the table is in view
+    
     const table = document.getElementById('taskTable');
     if (table) {
       const observer = new IntersectionObserver(
@@ -163,7 +109,27 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  scrollToTable() {
+  fetchTasks(): void {
+    this.isLoading = true;
+    this.todoService.getalltodo().subscribe({
+      next: (tasks: Todo[]) => {
+        this.todos = tasks;
+        this.dataSource = new MatTableDataSource(this.todos);
+        this.calculateTaskStatus();
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error fetching tasks', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  navigateToAdd(): void {
+    this.router.navigateByUrl('/add');
+  }
+
+  scrollToTable(): void {
     const tableElement = document.getElementById('taskTable');
     if (tableElement) {
       tableElement.scrollIntoView({ behavior: 'smooth' });
@@ -171,24 +137,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toggleStatus(todo: Todo) {
-    // Toggle the status
+  toggleStatus(todo: Todo): void {
     const newStatus = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
     todo.status = newStatus;
     
-    // Update the UI immediately
     this.dataSource.data = [...this.todos];
     this.calculateTaskStatus();
     
-    // Update the task in the backend
     const updatedTodo = { ...todo, status: newStatus };
     this.todoService.updatetodo(updatedTodo).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Task status updated successfully:', response);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error updating task status:', error);
-        // Revert the status change in case of error
         todo.status = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
         this.dataSource.data = [...this.todos];
         this.calculateTaskStatus();
@@ -196,13 +158,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  calculateTaskStatus() {
+  calculateTaskStatus(): void {
     this.completedTasks = this.todos.filter(todo => todo.status === 'Complete').length;
-    this.pendingTasks = this.todos.filter(todo => todo.status === 'Incomplete' || todo.status === 'pending' || todo.status === 'in-progress').length;
+    this.pendingTasks = this.todos.filter(todo => 
+      todo.status === 'Incomplete' || todo.status === 'pending' || todo.status === 'in-progress'
+    ).length;
   }
 
-
-  viewTask(taskId: number | undefined) {
+  viewTask(taskId: number | undefined): void {
     if (taskId !== undefined) {
       this.router.navigate(['/task-view', taskId.toString()]);
     } else {
@@ -210,16 +173,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  scrollToTable() {
-
-    const tableElement = document.getElementById('taskTable');
-    if (tableElement) {
-      tableElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-
-  updateTask(todo: Todo) {
+  updateTask(todo: Todo): void {
     if (todo.id !== undefined) {
       this.router.navigate(['/update-task', todo.id.toString()]);
     } else {
@@ -227,14 +181,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-   deleteTask(todo: Todo) {
-    if (todo.id === undefined) {
-      console.warn('Task ID is missing, cannot delete task.');
-      return;
-    }
+  deleteTask(todo: Todo): void {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Do you want to delete the task: "${todo.task}"?`,
+      text: `Do you want to delete the task: "${todo.title}"?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -243,14 +193,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       focusCancel: true
     }).then(result => {
       if (result.isConfirmed) {
-        this.todoservice.deletetodo(todo.id!.toString()).subscribe({
+        this.todoService.deletetodo(todo._id || todo.id?.toString() || '').subscribe({
           next: () => {
-            this.todos = this.todos.filter(t => t.id !== todo.id);
-            this.dataSource.data = this.todos;
+            this.todos = this.todos.filter(t => (t._id || t.id) !== (todo._id || todo.id));
+            this.dataSource.data = [...this.todos];
             this.calculateTaskStatus();
-            if (this.dataSource.paginator) {
-              this.dataSource.paginator.firstPage();
-            }
             Swal.fire('Deleted!', 'Your task has been deleted.', 'success');
           },
           error: (error: any) => {
@@ -259,38 +206,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           }
         });
       }
-
-      openManageAccountDialog() {
-    this.dialog.open(ManageAccountDialogComponent, {
-      width: '350px'
-
     });
   }
 
-  deleteTask(task: any) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to delete this task?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.todoService.deletetodo(task._id || task.id).subscribe({
-          next: () => {
-            Swal.fire('Deleted!', 'Task has been deleted.', 'success');
-            this.todos = this.todos.filter(t => (t._id || t.id) !== (task._id || task.id));
-            this.dataSource.data = [...this.todos];
-            this.calculateTaskStatus();
-          },
-          error: () => {
-            Swal.fire('Error!', 'Failed to delete task.', 'error');
-          }
-        });
-      }
+  openManageAccountDialog(): void {
+    this.dialog.open(ManageAccountDialogComponent, {
+      width: '350px'
     });
   }
 }

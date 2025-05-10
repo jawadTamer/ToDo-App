@@ -18,12 +18,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./component/dashboard/dashboard.component').then(c => c.DashboardComponent)
   },
-  // {
-  //   path: 'update-task/:id',
-  //   canActivate: [authGuard],
-  //   loadComponent: () =>
-  //     import('./component/update-task/update-task.component').then(c => c.UpdateTaskComponent)
-  // },
+  {
+    path: 'update-task/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./component/update-task/update-task.component').then(c => c.UpdateTaskComponent)
+  },
   {
     path: 'create-task',
     canActivate: [authGuard],
