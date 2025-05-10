@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { RouterModule } from '@angular/router';
 
 interface Todo {
   task: string;
@@ -33,7 +34,8 @@ interface Todo {
     MatPaginatorModule,
     MatFormFieldModule,
     MatInputModule,
-    CommonModule
+    CommonModule,
+    RouterModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],

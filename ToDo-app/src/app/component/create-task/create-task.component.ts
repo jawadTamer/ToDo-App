@@ -71,25 +71,47 @@ export class CreateTaskComponent implements OnInit {
       return;
     }
 
+    if (!this.todoService.isAuthenticated()) {
+      this.toastr.error('Please log in to create a task.', 'Authentication Error');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.isSubmitting = true;
-    const newTask: todo = this.taskForm.value;
-    newTask.date = new Date(newTask.date).toISOString();
+    const newTask: todo = {
+      ...this.taskForm.value,
+      date: new Date(this.taskForm.value.date).toISOString(),
+    };
 
     this.todoService.createtodo(newTask).subscribe({
-      next: (task: any) => {
+      next: (task: todo) => {
+        console.log('Task created successfully:', task);
         this.toastr.success('Task created successfully!', 'Success');
+        this.taskForm.reset({
+          title: '',
+          content: '',
+          category: '',
+          priority: 'Low',
+          tags: [],
+          status: 'pending',
+          date: new Date().toISOString().slice(0, 16),
+        });
         this.router.navigate(['/dashboard']);
       },
       error: (err: HttpErrorResponse) => {
         let errorMessage = 'Failed to create task. Please try again.';
         if (err.status === 0) {
           errorMessage = 'Network error. Check your connection.';
-        } else if (err.status === 403 || err.status === 401) {
-          errorMessage = 'Authentication or permission error.';
+        } else if (err.status === 401 || err.status === 403) {
+          errorMessage = 'Authentication error. Please log in again.';
+          this.router.navigate(['/login']);
         } else if (err.status === 400) {
-          errorMessage = 'Invalid data. Please check the fields.';
+          errorMessage = 'Invalid data. ' + (err.error?.message || 'Check the fields.');
+        } else if (err.error?.errors) {
+          errorMessage = Object.values(err.error.errors).join(', ');
         }
         this.toastr.error(errorMessage, 'Error');
+        console.error('Error creating task:', err);
         this.isSubmitting = false;
       },
       complete: () => {
