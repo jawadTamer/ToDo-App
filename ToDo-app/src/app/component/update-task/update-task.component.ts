@@ -1,19 +1,18 @@
 import { TodoService } from './../../shared/services/todo.service';
-import { todo } from './../../shared/model/todo';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { todo } from '../../shared/Model/todo';
 
 @Component({
   selector: 'app-update-task',
-  standalone: true, 
+  standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule, 
-    HttpClientModule, 
-    RouterLink 
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
   templateUrl: './update-task.component.html',
   styleUrls: ['./update-task.component.css']
@@ -50,7 +49,7 @@ export class UpdateTaskComponent implements OnInit {
             content: task.content,
             category: task.category,
             priority: task.priority,
-            tags: task.tags.join(','), 
+            tags: task.tags.join(','),
             status: task.status,
             date: new Date(task.date).toISOString().substring(0, 16)
           });
@@ -73,7 +72,7 @@ export class UpdateTaskComponent implements OnInit {
     const updatedTask: todo = {
       ...this.taskForm.value,
       id: this.taskId!,
-      tags: this.taskForm.value.tags.split(',').map((tag: string) => tag.trim()), 
+      tags: this.taskForm.value.tags.split(',').map((tag: string) => tag.trim()),
       date: new Date(this.taskForm.value.date).toISOString()
     };
 
