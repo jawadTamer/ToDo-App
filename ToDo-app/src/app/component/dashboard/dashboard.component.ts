@@ -12,17 +12,24 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+
+import { Router, RouterModule } from '@angular/router';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import Swal from 'sweetalert2';  
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { trigger, transition, style, animate } from '@angular/animations';
 import Swal from 'sweetalert2';
 
 import { NavbarComponent } from "../navbar/navbar.component";
 import { FooterComponent } from "../footer/footer.component";
-import { MatDialog } from '@angular/material/dialog';
 import { ManageAccountDialogComponent } from './manage-account-dialog.component';
 import { NavbarStateService } from '../../shared/services/navbar-state.service';
 
 import { Router, RouterModule } from '@angular/router';
+
 
 interface Todo {
   id?: number;
@@ -32,6 +39,7 @@ interface Todo {
   category: string;
   priority: string;
   tags: string[];
+
   status: string;
   date: string;
   _id?: string;
@@ -70,22 +78,23 @@ interface Todo {
   ]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
+
   // Columns to display in the tasks table
   displayedColumns: string[] = ['title', 'date', 'status', 'actions'];
   // Data source for the Material table
   dataSource!: MatTableDataSource<Todo>;
   // Reference to sort component
+
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Array to hold all todo tasks
   todos: Todo[] = [];
-
-  // Counters for completed and pending tasks
   completedTasks: number = 0;
   pendingTasks: number = 0;
 
+
   // Loading state
   isLoading: boolean = true;
+
 
   constructor(
     private taskService: TaskService,
@@ -96,19 +105,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ) {}
 
   // Store the user's name for display
+
   userName: string = '';
 
-  // Lifecycle hook: runs when component initializes
+  constructor(
+    private taskService: TaskService,
+    private router: Router,
+    private dialog: MatDialog,
+    private todoservice: TodoService
+  ) {}
+
   ngOnInit() {
     this.userName = localStorage.getItem('userName') || '';
     this.fetchTasks();
-    this.calculateTaskStatus();
   }
 
-  /**
-   * Fetch tasks from the server and update the data source.
-   */
   fetchTasks() {
+
     this.isLoading = true;
     this.todoService.getalltodo().subscribe(
       (tasks: any) => {
@@ -116,19 +129,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.dataSource = new MatTableDataSource(this.todos);
         this.calculateTaskStatus();
         this.isLoading = false;
+
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching tasks', error);
         this.isLoading = false;
       }
-    );
+    });
   }
+
 
   on() {
     this.Router.navigateByUrl('/add');
   }
 
+
   // Lifecycle hook: runs after the view has been initialized
+
   ngAfterViewInit() {
     if (this.dataSource) {
       this.dataSource.sort = this.sort;
@@ -154,10 +171,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Toggle the status of a task between Complete and Incomplete.
-   * @param todo The task to update.
-   */
   toggleStatus(todo: Todo) {
     // Toggle the status
     const newStatus = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
@@ -183,27 +196,74 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /**
-   * Calculate the number of completed and pending tasks.
-   */
   calculateTaskStatus() {
     this.completedTasks = this.todos.filter(todo => todo.status === 'Complete').length;
     this.pendingTasks = this.todos.filter(todo => todo.status === 'Incomplete' || todo.status === 'pending' || todo.status === 'in-progress').length;
   }
 
-  /**
-   * Scroll smoothly to the tasks table in the view.
-   */
-  scrollToTablee() {
+
+  viewTask(taskId: number | undefined) {
+    if (taskId !== undefined) {
+      this.router.navigate(['/task-view', taskId.toString()]);
+    } else {
+      console.warn('Task ID is missing, cannot navigate to task view.');
+    }
+  }
+
+  scrollToTable() {
+
     const tableElement = document.getElementById('taskTable');
     if (tableElement) {
       tableElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
-  openManageAccountDialog() {
+
+  updateTask(todo: Todo) {
+    if (todo.id !== undefined) {
+      this.router.navigate(['/update-task', todo.id.toString()]);
+    } else {
+      console.warn('Task ID is missing, cannot navigate to update page.');
+    }
+  }
+
+   deleteTask(todo: Todo) {
+    if (todo.id === undefined) {
+      console.warn('Task ID is missing, cannot delete task.');
+      return;
+    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete the task: "${todo.task}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.todoservice.deletetodo(todo.id!.toString()).subscribe({
+          next: () => {
+            this.todos = this.todos.filter(t => t.id !== todo.id);
+            this.dataSource.data = this.todos;
+            this.calculateTaskStatus();
+            if (this.dataSource.paginator) {
+              this.dataSource.paginator.firstPage();
+            }
+            Swal.fire('Deleted!', 'Your task has been deleted.', 'success');
+          },
+          error: (error: any) => {
+            console.error('Error deleting task', error);
+            Swal.fire('Error', 'There was an error deleting the task.', 'error');
+          }
+        });
+      }
+
+      openManageAccountDialog() {
     this.dialog.open(ManageAccountDialogComponent, {
       width: '350px'
+
     });
   }
 
@@ -234,3 +294,4 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 }
+

@@ -13,7 +13,7 @@ export class TodoService {
 
   constructor(
     private httpClient: HttpClient,
-    private authService: AuthService 
+    private authService: AuthService
   ) {
     const storedToken = localStorage.getItem('authToken');
     if (storedToken) {
@@ -25,7 +25,7 @@ export class TodoService {
     return this.authService.login({ email, password }).pipe(
       map((response: AuthResponse) => {
         if (response.token) {
-          this.setToken(response.token); 
+          this.setToken(response.token);
         }
         return response;
       }),
@@ -75,12 +75,11 @@ export class TodoService {
     );
   }
 
-  deletetodo(id: string): Observable<todo> {
+ deletetodo(id: string): Observable<todo> {
     return this.httpClient.delete<todo>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
-      catchError(this.handleError)
+        catchError(this.handleError)
     );
-  }
-
+}
   getbyid(id: string): Observable<todo> {
     return this.httpClient.get<todo>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
       catchError(this.handleError)
@@ -93,7 +92,7 @@ export class TodoService {
       errorMessage = 'Network error: Check your connection or server.';
     } else if (error.status === 401) {
       errorMessage = 'Unauthorized: Please log in again.';
-      this.clearToken(); 
+      this.clearToken();
     } else if (error.status === 403) {
       errorMessage = 'Forbidden: Invalid permissions.';
     } else if (error.status === 404) {
