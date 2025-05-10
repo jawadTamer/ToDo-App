@@ -21,7 +21,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ManageAccountDialogComponent } from './manage-account-dialog.component';
 import { NavbarStateService } from '../../shared/services/navbar-state.service';
 
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 
 interface Todo {
@@ -46,7 +46,7 @@ interface Todo {
 
     NavbarComponent,
     FooterComponent,
-    ManageAccountDialogComponent
+    ManageAccountDialogComponent,
 
     RouterModule
   ],
@@ -85,8 +85,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   constructor(
     private taskService: TaskService,
     private dialog: MatDialog,
-    private navbarState: NavbarStateService 
-    private router:Router
+    private navbarState: NavbarStateService ,
+  private Router:Router
   ) {}
 
 
@@ -118,7 +118,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     );
   }
  on(){
-  this.router.navigateByUrl('/add');
+  this.Router.navigateByUrl('/add');
  }
   // Lifecycle hook: runs after the view has been initialized
   ngAfterViewInit() {
