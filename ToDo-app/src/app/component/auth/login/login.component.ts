@@ -33,6 +33,7 @@ export class LoginComponent {
         
           if (response.name) {
             localStorage.setItem('userName', response.name);
+            
             this.formErrors = {};
             Swal.fire({
               icon: 'success',

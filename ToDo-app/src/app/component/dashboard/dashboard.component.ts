@@ -14,6 +14,11 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { NavbarComponent } from "../navbar/navbar.component";
+import { FooterComponent } from "../footer/footer.component";
+import { MatDialog } from '@angular/material/dialog';
+import { ManageAccountDialogComponent } from './manage-account-dialog.component';
+import { NavbarStateService } from '../../shared/services/navbar-state.service';
 
 interface Todo {
   task: string;
@@ -33,8 +38,11 @@ interface Todo {
     MatPaginatorModule,
     MatFormFieldModule,
     MatInputModule,
-    CommonModule
-  ],
+    CommonModule,
+    NavbarComponent,
+    FooterComponent,
+    ManageAccountDialogComponent
+],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   animations: [
@@ -66,7 +74,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   pendingTasks: number = 0;
 
   // Inject the TaskService to fetch tasks
-  constructor(private taskService: TaskService) {}
+  constructor(
+    private taskService: TaskService,
+    private dialog: MatDialog,
+    private navbarState: NavbarStateService // Add this
+  ) {}
 
   // Store the user's name for display
   userName: string = '';
@@ -102,6 +114,25 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
+    // Observe when the table is in view
+    const table = document.getElementById('taskTable');
+    if (table) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          this.navbarState.setTasksActive(entry.isIntersecting);
+        },
+        { threshold: 0.5 }
+      );
+      observer.observe(table);
+    }
+  }
+
+  scrollToTable() {
+    const tableElement = document.getElementById('taskTable');
+    if (tableElement) {
+      tableElement.scrollIntoView({ behavior: 'smooth' });
+      this.navbarState.setTasksActive(true);
+    }
   }
 
   /**
@@ -128,10 +159,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   /**
    * Scroll smoothly to the tasks table in the view.
    */
-  scrollToTable() {
+  scrollToTablee() {
     const tableElement = document.getElementById('taskTable');
     if (tableElement) {
       tableElement.scrollIntoView({ behavior: 'smooth' });
     }
+  }
+
+  openManageAccountDialog() {
+    this.dialog.open(ManageAccountDialogComponent, {
+      width: '350px'
+    });
   }
 }

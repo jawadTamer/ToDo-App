@@ -19,10 +19,12 @@
         <div class="navbar-collapse" [class.collapse]="isNavbarCollapsed" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2 px-2 px-lg-4">
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/dashboard">Dashboard</a>
+                    <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link">Tasks</a>
+                    <a class="nav-link"
+                       (click)="goToTasks($event)"
+                       [ngClass]="{ 'active': tasksActive }">Tasks</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" (click)="scrollToFooter($event)" >About</a>
@@ -31,7 +33,7 @@
                     <a class="nav-link" (click)="scrollToFooter($event)" >Contact</a>
                 </li>
             </ul>
-            <form class="d-flex" role="search">
+            <form class="d-flex" role="search" (submit)="logout(); $event.preventDefault();">
                 <button class="btn btn-darkBlue fw-medium px-3" type="submit">Logout</button>
             </form>
         </div>
