@@ -33,10 +33,9 @@ export class LoginComponent {
 
           localStorage.setItem('token', response.token);
 
-        
           if (response.name) {
             localStorage.setItem('userName', response.name);
-            
+
             this.formErrors = {};
             Swal.fire({
               icon: 'success',
@@ -47,7 +46,6 @@ export class LoginComponent {
               this.router.navigateByUrl('/dashboard');
             });
           } else if (this.loginForm.value.email) {
-       
             this.authService.getUserByEmail(this.loginForm.value.email).subscribe(user => {
               if (user && user.name) {
                 localStorage.setItem('userName', user.name);
@@ -60,9 +58,8 @@ export class LoginComponent {
                 timer: 1500
               }).then(() => {
                 this.router.navigateByUrl('/dashboard');
-
               });
-            }
+            });
           } else {
             this.formErrors = { general: 'No token received from server.' };
           }
