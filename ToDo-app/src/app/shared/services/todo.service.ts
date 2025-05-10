@@ -2,7 +2,7 @@ import { AuthResponse } from './auth.service/auth.models';
 import { AuthService } from './auth.service/auth.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, throwError, map } from 'rxjs';
+import { Observable, catchError, throwError, map, switchMap, forkJoin, of } from 'rxjs';
 import { todo } from '../../shared/Model/todo';
 
 @Injectable({
@@ -75,11 +75,37 @@ export class TodoService {
     );
   }
 
- deletetodo(id: string): Observable<todo> {
+  deletetodo(id: string): Observable<todo> {
     return this.httpClient.delete<todo>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
         catchError(this.handleError)
     );
-}
+  }
+
+  deleteAllUserTasks(): Observable<any> {
+    return this.httpClient.get<todo[]>(`${this.apiUrl}`, { headers: this.getAuthHeaders() }).pipe(
+      switchMap(tasks => {
+        if (tasks.length === 0) {
+          return of({ success: true, message: 'No tasks to delete' });
+        }
+        
+        // Create an array of delete observables
+        const deleteObservables = tasks.map(task => 
+          this.deletetodo(task.id?.toString() || '')
+        );
+        
+        // Execute all delete operations and return a single observable
+        return forkJoin(deleteObservables).pipe(
+          map(() => ({ success: true, message: `Deleted ${tasks.length} tasks` })),
+          catchError(error => throwError(() => ({ 
+            success: false, 
+            message: `Failed to delete all tasks: ${error.message}` 
+          })))
+        );
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   getbyid(id: string): Observable<todo> {
     return this.httpClient.get<todo>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
       catchError(this.handleError)

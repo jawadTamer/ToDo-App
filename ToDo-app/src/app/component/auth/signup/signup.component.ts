@@ -45,6 +45,7 @@ export class SignupComponent {
           console.log('Signup successful!', response);
           localStorage.setItem('token', response.token);
           localStorage.setItem('userName', response.name); 
+          localStorage.setItem('userEmail', response.email || userData.email);
           this.formErrors = {};
           this.isSubmitting = false;
 

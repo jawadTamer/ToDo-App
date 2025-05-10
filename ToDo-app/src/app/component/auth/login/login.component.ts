@@ -37,12 +37,25 @@ export class LoginComponent {
             localStorage.setItem('token', response.token); // <-- change 'authToken' to 'token'
             if (response.name) {
               localStorage.setItem('userName', response.name);
+              // Store email in localStorage if available
+              if (response.email) {
+                localStorage.setItem('userEmail', response.email);
+              } else {
+                localStorage.setItem('userEmail', this.loginForm.value.email);
+              }
               this.proceedAfterLogin();
             } else {
               this.authService.getUserByEmail(this.loginForm.value.email).subscribe({
                 next: (user: UserData | undefined) => {
                   if (user && user.name) {
                     localStorage.setItem('userName', user.name);
+                    if (user.email) {
+                      localStorage.setItem('userEmail', user.email);
+                    } else {
+                      localStorage.setItem('userEmail', this.loginForm.value.email);
+                    }
+                  } else {
+                    localStorage.setItem('userEmail', this.loginForm.value.email);
                   }
                   this.proceedAfterLogin();
                 },

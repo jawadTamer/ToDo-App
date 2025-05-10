@@ -19,4 +19,10 @@ export class AuthServicee {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.delete(`${this.apiUrl}/delete-account`, { headers });
   }
+
+  getCurrentUser(): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get(`${this.apiUrl}/me`, { headers });
+  }
 }
