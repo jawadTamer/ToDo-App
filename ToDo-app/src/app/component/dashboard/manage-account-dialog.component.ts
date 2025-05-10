@@ -25,7 +25,7 @@ import { TodoService } from '../../shared/services/todo.service';
       </div>
       <p>What would you like to do?</p>
     </mat-dialog-content>
-    <mat-dialog-actions align="end">
+    <mat-dialog-actions >
       <button mat-button color="primary" (click)="logout()">Logout</button>
       <button mat-button color="warn" (click)="deleteAccount()">Delete Account</button>
       <button mat-button (click)="close()">Cancel</button>
@@ -45,6 +45,7 @@ import { TodoService } from '../../shared/services/todo.service';
     }
     .user-info p {
       margin: 5px 0;
+      font-size:15px;
     }
   `]
 })
@@ -62,7 +63,7 @@ export class ManageAccountDialogComponent implements OnInit {
   ngOnInit(): void {
     this.userName = localStorage.getItem('userName');
     this.userEmail = localStorage.getItem('userEmail');
-    
+
     // Try to get current user info if email is not available
     if (!this.userEmail) {
       this.authService.getCurrentUser().subscribe({
@@ -92,7 +93,6 @@ export class ManageAccountDialogComponent implements OnInit {
   }
 
   deleteAccount() {
-    // Use SweetAlert2 for confirmation
     Swal.fire({
       title: 'Are you sure?',
       text: 'Are you sure you want to delete your account? This action cannot be undone and will delete all your tasks.',
@@ -118,7 +118,7 @@ export class ManageAccountDialogComponent implements OnInit {
         this.todoService.deleteAllUserTasks().subscribe({
           next: (result) => {
             console.log('Tasks deletion result:', result);
-            
+
             // Then delete the account
             this.authService.deleteAccount().subscribe({
               next: () => {
