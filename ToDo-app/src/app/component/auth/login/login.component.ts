@@ -7,17 +7,20 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../shared/services/auth.service/auth.service';
 import { AuthResponse, UserData } from '../../../shared/services/auth.service/auth.models';
+interface FormErrors {
+  general?: string;
+  [key: string]: string | undefined;
+}
 
 @Component({
   standalone: true,
   imports: [ReactiveFormsModule, NgIf, KeyValuePipe, NgFor, RouterModule],
   selector: 'app-login',
-  templateUrl: './login.component.html'
+  templateUrl:'./login.component.html'
 })
 export class LoginComponent {
-  loginForm: FormGroup;
-  formErrors: { [key: string]: string } = {};
-
+   loginForm: FormGroup;
+  formErrors: FormErrors = {};
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -25,13 +28,13 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
+ onSubmit() {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response: AuthResponse) => {
           console.log('Login successful!', response);
           if (response.token) {
-            localStorage.setItem('authToken', response.token);
+            localStorage.setItem('token', response.token); // <-- change 'authToken' to 'token'
             if (response.name) {
               localStorage.setItem('userName', response.name);
               this.proceedAfterLogin();
@@ -65,7 +68,7 @@ export class LoginComponent {
           Swal.fire({
             icon: 'error',
             title: 'Login failed!',
-            text: this.formErrors['general'] || 'Please check your email or password.',
+            text: this.formErrors.general || 'Please check your email or password.',
             confirmButtonText: 'Try Again'
           });
         },
@@ -78,8 +81,7 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
     }
   }
-
-  private proceedAfterLogin(): void {
+ private proceedAfterLogin(): void {
     this.formErrors = {};
     Swal.fire({
       icon: 'success',
