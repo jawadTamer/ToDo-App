@@ -24,8 +24,10 @@
         </div>
         <div class="quick-links">
           <h2>Quick Links</h2>
-          <button mat-raised-button color="primary">Add New Task</button>
+
+        <button mat-raised-button color="primary" [routerLink]="['/create-task']">Add New Task</button>
           <button mat-raised-button color="primary" (click)="openManageAccountDialog()">Manage Account</button>
+
         </div>
       </div>
     </mat-card-content>
@@ -33,7 +35,7 @@
 
   <mat-card class="dashboard-card">
     <mat-card-header>
-      <mat-card-title>My Tasks</mat-card-title> 
+      <mat-card-title>My Tasks</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div *ngIf="dataSource && dataSource.data.length === 0">
@@ -90,3 +92,4 @@
 </div>
 
 <app-footer/>
+

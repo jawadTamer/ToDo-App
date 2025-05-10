@@ -25,7 +25,13 @@ export const routes: Routes = [
   //     import('./component/update-task/update-task.component').then(c => c.UpdateTaskComponent)
   // },
   {
+    path: 'create-task',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./component/create-task/create-task.component').then(c => c.CreateTaskComponent)
+  },
+  {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: 'dashboard'
   }
 ];

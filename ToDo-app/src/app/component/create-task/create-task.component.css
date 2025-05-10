@@ -1,37 +1,205 @@
+@import 'ngx-toastr/toastr';
 
-.container {
-  max-width: 600px;
+:root {
+  --color-lightest: #F9F7F7;
+  --color-light: #DBE2EF;
+  --color-medium: #3F72AF;
+  --color-dark: #112D4E;
 }
 
-.tag-list {
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: var(--color-lightest);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.create-task-wrapper {
+  width: 100%;
+  padding: 20px;
+}
+
+.create-task-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+  transition: box-shadow 0.3s ease;
+}
+
+.create-task-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+  color: var(--color-dark);
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-medium);
+  padding-bottom: 10px;
+}
+
+.form-row {
+  margin-bottom: 20px;
+}
+
+.form-row label {
+  display: block;
+  color: var(--color-dark);
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.form-row input[type="text"],
+.form-row input[type="datetime-local"],
+.form-row textarea,
+.form-row select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--color-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--color-lightest);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-row input[type="text"]:focus,
+.form-row input[type="datetime-local"]:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+  outline: none;
+  border-color: var(--color-medium);
+  box-shadow: 0 0 10px rgba(63, 114, 175, 0.3);
+}
+
+.form-row textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+.tags-container {
+  margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 10px;
 }
 
-.badge {
+.tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+  background: var(--color-medium);
+  color: var(--color-lightest);
+  padding: 8px 12px;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: transform 0.2s ease;
 }
 
-.btn-close {
-  font-size: 0.75rem;
+.tag:hover {
+  transform: scale(1.05);
 }
 
-.btn-primary, .btn-secondary {
-  transition: all 0.2s ease;
+.tag button {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  color: var(--color-lightest);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
 }
 
-.btn-primary:hover, .btn-secondary:hover {
-  opacity: 0.9;
+.tag button:hover {
+  color: var(--color-light);
 }
 
-.form-control:focus, .form-select:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 25px;
 }
 
-.text-danger {
-  color: red !important;
+.btn-cancel,
+.btn-submit {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.btn-cancel {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+}
+
+.btn-cancel:hover {
+  background-color: #c0c8d5;
+  transform: translateY(-2px);
+}
+
+.btn-submit {
+  background-color: var(--color-medium);
+  color: var(--color-lightest);
+}
+
+.btn-submit:hover {
+  background-color: var(--color-dark);
+  transform: translateY(-2px);
+}
+
+.btn-submit:disabled {
+  background-color: #a0b0d0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.loading {
+  text-align: center;
+  color: var(--color-dark);
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+  .create-task-card {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
+  }
 }

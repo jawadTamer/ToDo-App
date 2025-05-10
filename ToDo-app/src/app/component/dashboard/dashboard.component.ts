@@ -14,11 +14,15 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { trigger, transition, style, animate } from '@angular/animations';
+
 import { NavbarComponent } from "../navbar/navbar.component";
 import { FooterComponent } from "../footer/footer.component";
 import { MatDialog } from '@angular/material/dialog';
 import { ManageAccountDialogComponent } from './manage-account-dialog.component';
 import { NavbarStateService } from '../../shared/services/navbar-state.service';
+
+import { RouterModule } from '@angular/router';
+
 
 interface Todo {
   task: string;
@@ -39,10 +43,14 @@ interface Todo {
     MatFormFieldModule,
     MatInputModule,
     CommonModule,
+
     NavbarComponent,
     FooterComponent,
     ManageAccountDialogComponent
-],
+
+    RouterModule
+  ],
+
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   animations: [
@@ -73,12 +81,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   completedTasks: number = 0;
   pendingTasks: number = 0;
 
-  // Inject the TaskService to fetch tasks
+ 
   constructor(
     private taskService: TaskService,
     private dialog: MatDialog,
-    private navbarState: NavbarStateService // Add this
+    private navbarState: NavbarStateService 
+    private router:Router
   ) {}
+
 
   // Store the user's name for display
   userName: string = '';
@@ -107,7 +117,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     );
   }
-
+ on(){
+  this.router.navigateByUrl('/add');
+ }
   // Lifecycle hook: runs after the view has been initialized
   ngAfterViewInit() {
     if (this.dataSource) {
