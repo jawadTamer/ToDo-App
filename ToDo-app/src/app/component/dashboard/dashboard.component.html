@@ -1,91 +1,108 @@
+<app-navbar/>
+<div class="main-content">
+
 <div class="alert alert-info mt-3" *ngIf="userName">
-    Welcome, {{ userName }}!
-  </div>
+  Welcome, {{ userName }}!
+</div>
 
-  <div class="dashboard-container">
-    <mat-card class="overview-card">
-      <mat-card-content>
-        <div class="overview-section">
-          <div class="overview-item">
-            <h2>Tasks Overview</h2>
-            <div class="task-status">
-              <div class="status-item">
-                <span class="number">{{completedTasks}}</span>
-                <span class="text">Completed</span>
-              </div>
-              <div class="status-item">
-                <span class="number">{{pendingTasks}}</span>
-                <span class="text">Pending</span>
-              </div>
+<div class="dashboard-container">
+  <mat-card class="overview-card">
+    <mat-card-content>
+      <div class="overview-section">
+        <div class="overview-item">
+          <h2>Tasks Overview</h2>
+          <div class="task-status">
+            <div class="status-item">
+              <span class="number">{{completedTasks}}</span>
+              <span class="text">Completed</span>
             </div>
-            <button mat-raised-button color="primary" (click)="scrollToTable()">View All Tasks</button>
+            <div class="status-item">
+              <span class="number">{{pendingTasks}}</span>
+              <span class="text">Pending</span>
+            </div>
           </div>
-          <div class="quick-links">
-            <h2>Quick Links</h2>
-            <button mat-raised-button color="primary" [routerLink]="['/create-task']">Add New Task</button>
-            <button mat-raised-button color="primary">Manage Account</button>
-          </div>
+          <button mat-raised-button color="primary" (click)="scrollToTablee()">View All Tasks</button>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="quick-links">
+          <h2>Quick Links</h2>
 
-    <mat-card class="dashboard-card">
-      <mat-card-header>
-        <mat-card-title>My Tasks</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div *ngIf="dataSource && dataSource.data.length === 0">
-          <p>There are no tasks yet.</p>
+        <button mat-raised-button color="primary" [routerLink]="['/create-task']">Add New Task</button>
+          <button mat-raised-button color="primary" (click)="openManageAccountDialog()">Manage Account</button>
+
         </div>
-        <table mat-table [dataSource]="dataSource" *ngIf="dataSource && dataSource.data.length > 0" matSort class="task-table" id="taskTable" >
-          <!-- Task Column -->
-          <!-- Task Column -->
-<ng-container matColumnDef="task">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header> Task </th>
-  <td mat-cell *matCellDef="let element" (click)="viewTask(element.id)" style="cursor: pointer;">
-    {{element.task}}
-  </td>
-</ng-container>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-          <!-- Due Date Column -->
-          <ng-container matColumnDef="dueDate">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Due Date </th>
-            <td mat-cell *matCellDef="let element"> {{element.dueDate}} </td>
-          </ng-container>
+  <mat-card class="dashboard-card">
+    <mat-card-header>
+      <mat-card-title>My Tasks</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Loading Spinner -->
+      <div class="spinner-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="loading-text">Loading tasks...</p>
+      </div>
 
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-            <td mat-cell *matCellDef="let element">
-              <input type="radio" class="radio-button" [checked]="element.status === 'Complete'" (click)="toggleStatus(element)">
-              {{element.status}}
-            </td>
-          </ng-container>
+      <!-- No Tasks Message -->
+      <div *ngIf="!isLoading && dataSource && dataSource.data.length === 0">
+        <p>There are no tasks yet.</p>
+      </div>
 
-          <!-- Actions Column -->
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
-            <td mat-cell *matCellDef="let element">
-              <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
+      <!-- Tasks Table -->
+      <table mat-table [dataSource]="dataSource" *ngIf="!isLoading && dataSource && dataSource.data.length > 0" matSort class="task-table" id="taskTable">
+        <!-- Task Column -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Task </th>
+          <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+        </ng-container>
+
+        <!-- Due Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Due Date </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.date | date: 'medium' }}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+          <td mat-cell *matCellDef="let element">
+            <input type="radio" class="radio-button" [checked]="element.status === 'Complete'" (click)="toggleStatus(element)">
+            {{element.status}}
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                Edit
               </button>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="updateTask(element)">
-                  <mat-icon>edit</mat-icon>
-                  Edit
-                </button>
-                <button mat-menu-item (click)="deleteTask(element)">
-                  <mat-icon>delete</mat-icon>
-                  Delete
-                </button>
-              </mat-menu>
-            </td>
-          </ng-container>
+              <button mat-menu-item (click)="deleteTask(element)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
-        </table>
-        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons aria-label="Select page of tasks"></mat-paginator>
-      </mat-card-content>
-    </mat-card>
-  </div>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'completed-task': row.status === 'Complete'}"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+ 
+</div>
+<app-footer></app-footer>
+

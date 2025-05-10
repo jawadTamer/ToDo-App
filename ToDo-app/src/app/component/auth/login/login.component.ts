@@ -34,7 +34,7 @@ export class LoginComponent {
         next: (response: AuthResponse) => {
           console.log('Login successful!', response);
           if (response.token) {
-            localStorage.setItem('authToken', response.token);
+            localStorage.setItem('token', response.token); // <-- change 'authToken' to 'token'
             if (response.name) {
               localStorage.setItem('userName', response.name);
               this.proceedAfterLogin();

@@ -13,11 +13,24 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule } from '@angular/router';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import Swal from 'sweetalert2';  
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { trigger, transition, style, animate } from '@angular/animations';
+
+import { NavbarComponent } from "../navbar/navbar.component";
+import { FooterComponent } from "../footer/footer.component";
+import { ManageAccountDialogComponent } from './manage-account-dialog.component';
+import { NavbarStateService } from '../../shared/services/navbar-state.service';
+
+import { Router, RouterModule } from '@angular/router';
+
+
 
 interface Todo {
   id?: number;
@@ -39,8 +52,14 @@ interface Todo {
     MatFormFieldModule,
     MatInputModule,
     CommonModule,
+
+    NavbarComponent,
+    FooterComponent,
+    ManageAccountDialogComponent,
+
     RouterModule
   ],
+
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   animations: [
@@ -64,6 +83,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   todos: Todo[] = [];
   completedTasks: number = 0;
   pendingTasks: number = 0;
+
+
+ 
+  constructor(
+    private taskService: TaskService,
+    private dialog: MatDialog,
+    private navbarState: NavbarStateService ,
+  private Router:Router
+  ) {}
+
+
+  // Store the user's name for display
+
   userName: string = '';
 
   constructor(
@@ -93,10 +125,34 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
+ on(){
+  this.Router.navigateByUrl('/add');
+ }
+  // Lifecycle hook: runs after the view has been initialized
+
   ngAfterViewInit() {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+    }
+    // Observe when the table is in view
+    const table = document.getElementById('taskTable');
+    if (table) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          this.navbarState.setTasksActive(entry.isIntersecting);
+        },
+        { threshold: 0.5 }
+      );
+      observer.observe(table);
+    }
+  }
+
+  scrollToTable() {
+    const tableElement = document.getElementById('taskTable');
+    if (tableElement) {
+      tableElement.scrollIntoView({ behavior: 'smooth' });
+      this.navbarState.setTasksActive(true);
     }
   }
 
@@ -114,6 +170,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.pendingTasks = this.todos.filter(todo => todo.status === 'Incomplete').length;
   }
 
+
   viewTask(taskId: number | undefined) {
     if (taskId !== undefined) {
       this.router.navigate(['/task-view', taskId.toString()]);
@@ -123,11 +180,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   scrollToTable() {
+
     const tableElement = document.getElementById('taskTable');
     if (tableElement) {
       tableElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
+
 
   updateTask(todo: Todo) {
     if (todo.id !== undefined) {
@@ -169,6 +228,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           }
         });
       }
+
+      openManageAccountDialog() {
+    this.dialog.open(ManageAccountDialogComponent, {
+      width: '350px'
+
     });
   }
 }
