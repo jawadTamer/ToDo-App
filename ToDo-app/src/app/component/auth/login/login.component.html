@@ -4,8 +4,8 @@
         <h3 class="text-center mb-4">Login</h3>
   
         <!-- رسالة الأخطاء -->
-        <div *ngIf="formErrors.general" class="alert alert-danger">
-          {{ formErrors.general }}
+        <div *ngIf="formErrors['general']" class="alert alert-danger">
+          {{ formErrors['general'] }}
         </div>
         <ul *ngIf="formErrors && (formErrors | keyvalue).length > 0" class="alert alert-danger">
           <li *ngFor="let error of formErrors | keyvalue">{{ error.value }}</li>
