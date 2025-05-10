@@ -30,36 +30,25 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response: AuthResponse) => {
           console.log('Login successful!', response);
-
-          localStorage.setItem('token', response.token);
-
-          if (response.name) {
-            localStorage.setItem('userName', response.name);
-
-            this.formErrors = {};
-            Swal.fire({
-              icon: 'success',
-              title: 'Login successful!',
-              showConfirmButton: false,
-              timer: 1500
-            }).then(() => {
-              this.router.navigateByUrl('/dashboard');
-            });
-          } else if (this.loginForm.value.email) {
-            this.authService.getUserByEmail(this.loginForm.value.email).subscribe(user => {
-              if (user && user.name) {
-                localStorage.setItem('userName', user.name);
-              }
-              this.formErrors = {};
-              Swal.fire({
-                icon: 'success',
-                title: 'Login successful!',
-                showConfirmButton: false,
-                timer: 1500
-              }).then(() => {
-                this.router.navigateByUrl('/dashboard');
+          if (response.token) {
+            localStorage.setItem('token', response.token); // <-- change 'authToken' to 'token'
+            if (response.name) {
+              localStorage.setItem('userName', response.name);
+              this.proceedAfterLogin();
+            } else {
+              this.authService.getUserByEmail(this.loginForm.value.email).subscribe({
+                next: (user: UserData | undefined) => {
+                  if (user && user.name) {
+                    localStorage.setItem('userName', user.name);
+                  }
+                  this.proceedAfterLogin();
+                },
+                error: (error: HttpErrorResponse) => {
+                  console.log('Error fetching user data:', error);
+                  this.proceedAfterLogin();
+                }
               });
-            });
+            }
           } else {
             this.formErrors = { general: 'No token received from server.' };
           }
