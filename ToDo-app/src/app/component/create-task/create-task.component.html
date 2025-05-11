@@ -1,0 +1,77 @@
+<div class="create-task-wrapper">
+  <div class="create-task-card">
+    <h2 class="card-title">Create New Task</h2>
+    <form [formGroup]="taskForm" (ngSubmit)="createTask()" *ngIf="!isSubmitting">
+      <div class="form-row" *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.invalid">
+        <small class="error" *ngIf="taskForm.get('title')?.errors?.['required']">Title is required.</small>
+        <small class="error" *ngIf="taskForm.get('title')?.errors?.['minlength']">Title must be at least 3 characters.</small>
+        <small class="error" *ngIf="taskForm.get('title')?.errors?.['maxlength']">Title must not exceed 50 characters.</small>
+      </div>
+      <div class="form-row">
+        <label for="title">Title</label>
+        <input type="text" id="title" formControlName="title" required>
+      </div>
+
+      <div class="form-row" *ngIf="taskForm.get('content')?.touched && taskForm.get('content')?.invalid">
+        <small class="error" *ngIf="taskForm.get('content')?.errors?.['required']">Content is required.</small>
+        <small class="error" *ngIf="taskForm.get('content')?.errors?.['minlength']">Content must be at least 10 characters.</small>
+        <small class="error" *ngIf="taskForm.get('content')?.errors?.['maxlength']">Content must not exceed 500 characters.</small>
+      </div>
+      <div class="form-row">
+        <label for="content">Content</label>
+        <textarea id="content" formControlName="content" required></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="category">Category</label>
+        <select id="category" formControlName="category" required>
+          <option value="">Select Category</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="priority">Priority</label>
+        <select id="priority" formControlName="priority" required>
+          <option value="">Select Priority</option>
+          <option *ngFor="let pri of priorities" [value]="pri">{{ pri }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="tags">Tags</label>
+        <input type="text" id="tags" (keyup.enter)="addTag($event)" placeholder="Add tag and press Enter">
+        <div class="tags-container">
+          <span *ngFor="let tag of taskForm.get('tags')?.value" class="tag">
+            {{ tag }} <button type="button" (click)="removeTag(tag)">x</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="status">Status</label>
+        <select id="status" formControlName="status" required>
+          <option value="">Select Status</option>
+          <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="taskForm.get('date')?.touched && taskForm.get('date')?.invalid">
+        <small class="error" *ngIf="taskForm.get('date')?.errors?.['required']">Date is required.</small>
+        <small class="error" *ngIf="taskForm.get('date')?.errors?.['minDate']">Date must be today or later.</small>
+      </div>
+      <div class="form-row">
+        <label for="date">Date</label>
+        <input type="datetime-local" id="date" formControlName="date" required>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="isSubmitting || taskForm.invalid">
+          {{ isSubmitting ? 'Creating...' : 'Create Task' }}
+        </button>
+      </div>
+    </form>
+    <div *ngIf="isSubmitting" class="loading">Creating task...</div>
+  </div>
+</div>
