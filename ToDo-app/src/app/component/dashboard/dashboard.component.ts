@@ -51,9 +51,8 @@ interface Todo {
     CommonModule,
     NavbarComponent,
     FooterComponent,
-    ManageAccountDialogComponent,
     RouterModule
-  ],
+],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   animations: [
@@ -96,7 +95,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (this.dataSource) {
       this.dataSource.sort = this.sort;
     }
-    
+
     const table = document.getElementById('taskTable');
     if (table) {
       const observer = new IntersectionObserver(
@@ -140,10 +139,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   toggleStatus(todo: Todo): void {
     const newStatus = todo.status === 'Complete' ? 'Incomplete' : 'Complete';
     todo.status = newStatus;
-    
+
     this.dataSource.data = [...this.todos];
     this.calculateTaskStatus();
-    
+
     const updatedTodo = { ...todo, status: newStatus };
     this.todoService.updatetodo(updatedTodo).subscribe({
       next: (response: any) => {
@@ -160,7 +159,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   calculateTaskStatus(): void {
     this.completedTasks = this.todos.filter(todo => todo.status === 'Complete').length;
-    this.pendingTasks = this.todos.filter(todo => 
+    this.pendingTasks = this.todos.filter(todo =>
       todo.status === 'Incomplete' || todo.status === 'pending' || todo.status === 'in-progress'
     ).length;
   }

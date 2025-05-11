@@ -38,6 +38,17 @@ export const routes: Routes = [
   }
   ,
   {
+    path: 'aboutus',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./component/aboutus/aboutus.component').then(c => c.AboutusComponent)
+  },{
+    path: 'contactus',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./component/contactus/contactus.component').then(c => c.ContactusComponent)
+  },
+  {
     path: '**',
     redirectTo: 'dashboard'
   }

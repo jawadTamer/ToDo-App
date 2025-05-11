@@ -27,10 +27,10 @@
                        [ngClass]="{ 'active': tasksActive }">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" (click)="scrollToFooter($event)" >About</a>
+                    <a class="nav-link" routerLink="/aboutus" >About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" (click)="scrollToFooter($event)" >Contact</a>
+                    <a class="nav-link" routerLink="/contactus" >Contact</a>
                 </li>
             </ul>
             <form class="d-flex" role="search" (submit)="logout(); $event.preventDefault();">
