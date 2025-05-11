@@ -1,5 +1,5 @@
 [build]
-  publish = "dist/to-do-app"
+  publish = "dist/to-do-app/browser"
   command = "npm run build:prod"
 
 [[redirects]]
