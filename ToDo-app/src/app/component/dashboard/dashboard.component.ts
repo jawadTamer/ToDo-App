@@ -22,6 +22,7 @@ import { NavbarComponent } from "../navbar/navbar.component";
 import { FooterComponent } from "../footer/footer.component";
 import { ManageAccountDialogComponent } from './manage-account-dialog.component';
 import { NavbarStateService } from '../../shared/services/navbar-state.service';
+import { todo } from '../../shared/Model/todo';
 
 interface Todo {
   id?: number;
@@ -30,7 +31,7 @@ interface Todo {
   content: string;
   category: string;
   priority: string;
-  tags: string[];
+  tags: string[] | string;
   status: string;
   date: string;
   _id?: string;
@@ -111,7 +112,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   fetchTasks(): void {
     this.isLoading = true;
     this.todoService.getalltodo().subscribe({
-      next: (tasks: Todo[]) => {
+      next: (tasks: todo[]) => {
         this.todos = tasks;
         this.dataSource = new MatTableDataSource(this.todos);
         this.calculateTaskStatus();
@@ -159,12 +160,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   calculateTaskStatus(): void {
     this.completedTasks = this.todos.filter(todo => todo.status === 'Complete').length;
-    this.pendingTasks = this.todos.filter(todo =>
-      todo.status === 'Incomplete' || todo.status === 'pending' || todo.status === 'in-progress'
-    ).length;
+    this.pendingTasks = this.todos.filter(todo => todo.status === 'Incomplete').length;
   }
 
-  viewTask(taskId: number | undefined): void {
+  viewTask(taskId: string | number | undefined): void {
     if (taskId !== undefined) {
       this.router.navigate(['/task-view', taskId.toString()]);
     } else {
@@ -173,8 +172,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   updateTask(todo: Todo): void {
-    if (todo.id !== undefined) {
-      this.router.navigate(['/update-task', todo.id.toString()]);
+    const taskId = todo._id || todo.id?.toString();
+    if (taskId) {
+      this.router.navigate(['/update-task', taskId]);
     } else {
       console.warn('Task ID is missing, cannot navigate to update page.');
     }

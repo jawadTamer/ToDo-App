@@ -35,9 +35,8 @@ export class TaskViewComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
-      const id = idParam ? +idParam : null;
-      if (id !== null) {
-        this.fetchTask(id);
+      if (idParam) {
+        this.fetchTask(idParam);
       } else {
         this.loading = false;
         this.task = undefined;
@@ -45,17 +44,25 @@ export class TaskViewComponent implements OnInit {
     });
   }
 
-  fetchTask(id: number) {
+  fetchTask(id: string) {
     this.loading = true;
-    this.todoService.getbyid(id.toString()).subscribe({
+    this.todoService.getbyid(id).subscribe({
       next: (task: todo | undefined) => {
         if (task) {
+          let standardStatus = 'Incomplete';
+          if (task.status) {
+            if (task.status.toLowerCase() === 'complete' || 
+                task.status.toLowerCase() === 'completed') {
+              standardStatus = 'Complete';
+            }
+          }
+          
           // Map the todo to the Todo interface
           this.task = {
             id: task.id ? +task.id : undefined, // Adjust as necessary
             task: task.title, // Assuming title corresponds to task
             dueDate: task.date, // Assuming date corresponds to dueDate
-            status: task.status,
+            status: standardStatus,
           };
         } else {
           this.task = undefined;
