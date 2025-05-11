@@ -1,6 +1,9 @@
 <div class="container">
     <h2>Update Task</h2>
-    <form [formGroup]="taskForm" (ngSubmit)="updateTask()">
+    <div *ngIf="isLoading" class="loading-spinner">
+      <p>Loading task data...</p>
+    </div>
+    <form [formGroup]="taskForm" (ngSubmit)="updateTask()" *ngIf="!isLoading">
       <div class="form-group">
         <label for="title">Title</label>
         <input id="title" type="text" formControlName="title" class="form-control" />
@@ -21,9 +24,7 @@
         <label for="category">Category</label>
         <select id="category" formControlName="category" class="form-control">
           <option value="">Select Category</option>
-          <option value="Work">Work</option>
-          <option value="Personal">Personal</option>
-          <option value="Other">Other</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
         </select>
         <div *ngIf="taskForm.get('category')?.touched && taskForm.get('category')?.hasError('required')" class="error">
           Category is required.
@@ -34,9 +35,7 @@
         <label for="priority">Priority</label>
         <select id="priority" formControlName="priority" class="form-control">
           <option value="">Select Priority</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
+          <option *ngFor="let priority of priorities" [value]="priority">{{priority}}</option>
         </select>
         <div *ngIf="taskForm.get('priority')?.touched && taskForm.get('priority')?.hasError('required')" class="error">
           Priority is required.
@@ -45,7 +44,13 @@
   
       <div class="form-group">
         <label for="tags">Tags (comma-separated)</label>
-        <input id="tags" type="text" formControlName="tags" class="form-control" placeholder="e.g., tag1,tag2" />
+        <input id="tags" 
+               type="text" 
+               formControlName="tags" 
+               class="form-control" 
+               placeholder="e.g., work,important,meeting" 
+        />
+        <small class="text-muted">Enter multiple tags separated by commas (e.g., work,important,meeting)</small>
         <div *ngIf="taskForm.get('tags')?.touched && taskForm.get('tags')?.hasError('required')" class="error">
           Tags are required.
         </div>
@@ -55,8 +60,7 @@
         <label for="status">Status</label>
         <select id="status" formControlName="status" class="form-control">
           <option value="">Select Status</option>
-          <option value="pending">Pending</option>
-          <option value="completed">Completed</option>
+          <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
         </select>
         <div *ngIf="taskForm.get('status')?.touched && taskForm.get('status')?.hasError('required')" class="error">
           Status is required.

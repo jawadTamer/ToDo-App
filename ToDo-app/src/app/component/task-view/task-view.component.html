@@ -12,16 +12,16 @@
       <div class="card-body text-center">
         <p class="h5 mb-2"><strong>Status:</strong></p>
         <span
-          [ngClass]="{'badge badge-success': task.status === 'Complete', 'badge badge-warning': task.status === 'In Progress', 'badge badge-danger': task.status === 'Incomplete'}"
+          [ngClass]="{'badge badge-success': task.status === 'Complete', 'badge badge-danger': task.status === 'Incomplete'}"
           class="status-badge d-flex align-items-center justify-content-center mx-auto mb-3">
           <mat-icon class="mr-2" *ngIf="task.status === 'Complete'">check_circle</mat-icon>
           <mat-icon class="mr-2" *ngIf="task.status === 'Incomplete'">error</mat-icon>
-          <mat-icon class="mr-2" *ngIf="task.status === 'In Progress'">hourglass_bottom</mat-icon>
           {{ task.status }}
         </span>
 
-        <div *ngIf="task.status === 'In Progress'" class="progress mx-auto" style="height: 8px; max-width: 250px;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+        <!-- Progress bar for Incomplete tasks -->
+        <div *ngIf="task.status === 'Incomplete'" class="progress mx-auto" style="height: 8px; max-width: 250px;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
       </div>
 

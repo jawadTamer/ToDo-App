@@ -27,10 +27,14 @@
                        [ngClass]="{ 'active': tasksActive }">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/aboutus" >About</a>
+                    <a class="nav-link" routerLink="/aboutus" 
+                       [ngClass]="{ 'active': aboutUsActive }" 
+                       routerLinkActive="active">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/contactus" >Contact</a>
+                    <a class="nav-link" routerLink="/contactus" 
+                       [ngClass]="{ 'active': contactUsActive }" 
+                       routerLinkActive="active">Contact</a>
                 </li>
             </ul>
             <form class="d-flex" role="search" (submit)="logout(); $event.preventDefault();">

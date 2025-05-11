@@ -15,7 +15,7 @@ export class TodoService {
     private httpClient: HttpClient,
     private authService: AuthService
   ) {
-    const storedToken = localStorage.getItem('authToken');
+    const storedToken = localStorage.getItem('token');
     if (storedToken) {
       this.setToken(storedToken);
     }
@@ -29,16 +29,16 @@ export class TodoService {
         }
         return response;
       }),
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   setToken(token: string): void {
-    localStorage.setItem('authToken', token);
+    localStorage.setItem('token', token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('authToken');
+    return localStorage.getItem('token');
   }
 
   isAuthenticated(): boolean {
@@ -58,26 +58,27 @@ export class TodoService {
 
   getalltodo(): Observable<todo[]> {
     return this.httpClient.get<todo[]>(this.apiUrl, { headers: this.getAuthHeaders() }).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   createtodo(todo: todo): Observable<todo> {
     console.log('Sending POST request with data:', todo);
     return this.httpClient.post<todo>(this.apiUrl, todo, { headers: this.getAuthHeaders() }).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   updatetodo(todo: todo): Observable<todo> {
-    return this.httpClient.put<todo>(`${this.apiUrl}/${todo.id}`, todo, { headers: this.getAuthHeaders() }).pipe(
-      catchError(this.handleError)
+    const taskId = todo._id || todo.id;
+    return this.httpClient.put<todo>(`${this.apiUrl}/${taskId}`, todo, { headers: this.getAuthHeaders() }).pipe(
+      catchError(error => this.handleError(error))
     );
   }
 
   deletetodo(id: string): Observable<todo> {
     return this.httpClient.delete<todo>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
-        catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
@@ -102,13 +103,13 @@ export class TodoService {
           })))
         );
       }),
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   getbyid(id: string): Observable<todo> {
     return this.httpClient.get<todo>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
@@ -133,6 +134,6 @@ export class TodoService {
   }
 
   clearToken(): void {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
   }
 }

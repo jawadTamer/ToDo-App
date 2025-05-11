@@ -83,6 +83,10 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="viewTask(element._id || element.id)">
+                <mat-icon>visibility</mat-icon>
+                View
+              </button>
               <button mat-menu-item (click)="updateTask(element)">
                 <mat-icon>edit</mat-icon>
                 Edit
