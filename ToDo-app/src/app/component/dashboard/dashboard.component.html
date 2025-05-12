@@ -1,44 +1,48 @@
 <app-navbar/>
 <div class="main-content">
 
-<div class="alert alert-info mt-3" *ngIf="userName">
-  Welcome, {{ userName }}!
-</div>
+  <div class="alert alert-info mt-3" *ngIf="userName">
+    Welcome, {{ userName }}!
+  </div>
 
-<div class="dashboard-container">
-  <mat-card class="overview-card">
-    <mat-card-content>
-      <div class="overview-section">
-        <div class="overview-item">
-          <h2>Tasks Overview</h2>
-          <div class="task-status">
-            <div class="status-item">
-              <span class="number">{{completedTasks}}</span>
-              <span class="text">Completed</span>
+  <div class="dashboard-container">
+    <mat-card class="overview-card">
+      <mat-card-content>
+        <div class="overview-section">
+          <div class="overview-item">
+            <h2>Tasks Overview</h2>
+            <div class="task-status">
+              <div class="status-item">
+                <span class="number">{{completedTasks}}</span>
+                <span class="text">Completed</span>
+              </div>
+              <div class="status-item">
+                <span class="number">{{pendingTasks}}</span>
+                <span class="text">Pending</span>
+              </div>
             </div>
-            <div class="status-item">
-              <span class="number">{{pendingTasks}}</span>
-              <span class="text">Pending</span>
-            </div>
+            <button mat-raised-button color="primary" (click)="scrollToTable()">View All Tasks</button>
           </div>
-          <button mat-raised-button color="primary" (click)="scrollToTable()">View All Tasks</button>
+          <div class="quick-links">
+            <h2>Quick Links</h2>
+            <button mat-raised-button color="primary" [routerLink]="['/create-task']">Add New Task</button>
+            <button mat-raised-button color="primary" (click)="openManageAccountDialog()">Manage Account</button>
+          </div>
         </div>
-        <div class="quick-links">
-          <h2>Quick Links</h2>
+      </mat-card-content>
+    </mat-card>
 
-        <button mat-raised-button color="primary" [routerLink]="['/create-task']">Add New Task</button>
-          <button mat-raised-button color="primary" (click)="openManageAccountDialog()">Manage Account</button>
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>My Tasks</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
 
+        <!-- Filter Input Field -->
+       <div class="mb-3">
+          <input type="text" class="form-control" (keyup)="applyFilter($event)" placeholder="Search by Task Name" style="max-width: 100%;">
         </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
 
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>My Tasks</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
       <div class="spinner-container" *ngIf="isLoading">
         <mat-spinner diameter="50"></mat-spinner>
         <p class="loading-text">Loading tasks...</p>
@@ -107,7 +111,13 @@
   </mat-card>
 </div>
 
- 
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'completed-task': row.status === 'Complete'}"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
 <app-footer></app-footer>
 

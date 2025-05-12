@@ -2,7 +2,7 @@ nav {
   background-color: var(--color-medium);
   color: white;
   border-radius: 10px;
-  margin: 10px;
+  margin: 5px;
 }
 .navbar-brand {
   font-size: 1.5rem;
