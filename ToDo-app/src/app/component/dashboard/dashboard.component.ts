@@ -87,11 +87,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
+   ngOnInit(): void {
     this.userName = localStorage.getItem('userName') || '';
     this.fetchTasks();
+    this.dataSource.filterPredicate = (data: Todo, filter: string) => {
+      return data.title.toLowerCase().includes(filter);
+    };
   }
-
   ngAfterViewInit(): void {
     if (this.dataSource) {
       this.dataSource.sort = this.sort;
@@ -109,7 +111,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  fetchTasks(): void {
+   fetchTasks(): void {
     this.isLoading = true;
     this.todoService.getalltodo().subscribe({
       next: (tasks: todo[]) => {
@@ -124,7 +126,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
   navigateToAdd(): void {
     this.router.navigateByUrl('/add');
   }
