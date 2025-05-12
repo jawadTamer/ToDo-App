@@ -11,10 +11,14 @@ body {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
-.overview-card {
+.overview-card, .dashboard-card {
   margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .overview-section {
@@ -83,6 +87,8 @@ body {
   border-collapse: collapse;
   color: var(--color-lightest);
   font-size: 16px;
+  table-layout: fixed;
+  overflow-x: auto;
 }
 
 .task-table th {
@@ -112,6 +118,9 @@ button {
   text-align: left;
   width: 25%;
   box-sizing: border-box;
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .radio-button {
@@ -140,9 +149,22 @@ mat-card-title {
   font-weight: bold;
 }
 
-.completed-task {
-  text-decoration: line-through;
-  color: #888; 
+.completed-task td,
+.completed-task td .cell-content,
+.completed-task td .status-text {
+  text-decoration: line-through !important;
+  color: #888 !important;
+}
+
+.task-table .mat-row.completed-task .mat-cell {
+  text-decoration: line-through !important;
+  color: #888 !important;
+}
+
+.task-table .mat-row.completed-task .mat-cell .cell-content,
+.task-table .mat-row.completed-task .mat-cell .status-text {
+  text-decoration: line-through !important;
+  color: #888 !important;
 }
 
 .spinner-container {
@@ -157,4 +179,176 @@ mat-card-title {
   margin-top: 1rem;
   color: #666;
   font-size: 1rem;
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}
+
+.table-responsive .mat-table {
+  min-width: 100%;
+  width: 100%;
+}
+
+@media screen and (max-width: 1024px) {
+  .overview-section {
+    flex-direction: column;
+  }
+  
+  .quick-links, .overview-item {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+  
+  .mat-card-content {
+    overflow-x: auto;
+  }
+  
+  .task-table th, .task-table td {
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .task-table {
+    font-size: 12px;
+    table-layout: fixed;
+    width: 100%;
+  }
+  
+  .task-table th, .task-table td {
+    padding: 10px 5px;
+  }
+  
+  .task-table td .cell-content {
+    white-space: normal;
+    word-break: break-word;
+    display: block;
+    width: 100%;
+  }
+  
+  .task-table td[data-label="Status"] .cell-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .task-table td[data-label="Status"] .radio-button {
+    margin-bottom: 5px;
+  }
+  
+  .task-table td[data-label="Status"] .status-text {
+    margin-left: 0;
+    text-align: center;
+  }
+  
+  .completed-task td .cell-content,
+  .completed-task td .status-text {
+    text-decoration: line-through;
+    color: #888 !important;
+  }
+
+  .task-table thead {
+    display: none;
+  }
+
+  .task-table td:nth-child(2) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+  }
+  
+  .task-table th, .task-table td {
+    padding: 8px 5px;
+    display: table-cell;
+    width: auto;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .task-table tr {
+    display: table-row;
+  }
+
+  .task-table thead {
+    display: table-header-group;
+  }
+  
+  .task-table tbody {
+    display: table-row-group;
+  }
+
+  .task-table td:before {
+    content: none;
+  }
+
+  .task-table th:nth-child(1), .task-table td:nth-child(1) {
+    width: 30%;
+  }
+  
+  .task-table th:nth-child(2), .task-table td:nth-child(2) {
+    width: 30%;
+  }
+  
+  .task-table th:nth-child(3), .task-table td:nth-child(3) {
+    width: 20%;
+  }
+  
+  .task-table th:nth-child(4), .task-table td:nth-child(4) {
+    width: 20%;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .task-table th, .task-table td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+  
+  .task-table th:nth-child(1), .task-table td:nth-child(1) {
+    width: 40%;
+  }
+  
+  .task-table th:nth-child(2), .task-table td:nth-child(2) {
+    width: 20%;
+  }
+  
+  .task-table td:nth-child(4) button {
+    padding: 0;
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+  }
+  
+  .task-table td:nth-child(4) .mat-icon {
+    font-size: 16px;
+    line-height: 16px;
+    height: 16px;
+    width: 16px;
+  }
+}
+
+.cell-content {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-text {
+  margin-left: 5px;
 }
